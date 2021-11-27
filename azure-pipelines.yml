@@ -14,14 +14,15 @@ strategy:
       python.version: '3.7'
 
 steps:
-- task: DownloadPackage@1
+- task: UniversalPackages@0
+  displayName: 'Download package'
   inputs:
-    packageType: 'upack'
-    feed: '7e2508b7-16ef-40ce-85b8-b565673fcfdb/798e57f2-935d-4895-8079-1db15fda034c'
-    view: 'c215f40e-9362-4de4-8df4-4b56f2936346'
-    definition: 'c4e76191-1448-4178-a432-060d27437f2c'
-    version: '0.0.1'
-    downloadPath: '$(System.ArtifactsDirectory)'
+    command: 'download'
+    downloadDirectory: '$(System.DefaultWorkingDirectory)'
+    feedsToUse: 'internal'
+    vstsFeed: '7e2508b7-16ef-40ce-85b8-b565673fcfdb/798e57f2-935d-4895-8079-1db15fda034c'
+    vstsFeedPackage: 'c4e76191-1448-4178-a432-060d27437f2c'
+    vstsPackageVersion: '*'
 - task: UsePythonVersion@0
   inputs:
     versionSpec: '$(python.version)'
@@ -49,6 +50,7 @@ steps:
     TargetFolder: $(Build.ArtifactStagingDirectory)
 
 - task: UniversalPackages@0
+  displayName: "Publish to artifacts"
   inputs:
     command: 'publish'
     publishDirectory: '$(Build.ArtifactStagingDirectory)'
