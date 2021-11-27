@@ -35,8 +35,16 @@ steps:
     ArtifactName: 'drop'
     publishLocation: 'Container'
 
-- task: PublishPipelineArtifact@1
-  displayName: 'publish to Azure artifacts'
+- task: CopyFiles@2
   inputs:
-    targetPath: './switch.db'
-    artifactName: 'switchDB'
+    contents: './switch.db'
+    TargetFolder: $(Build.ArtifactStagingDirectory)
+
+- task: UniversalPackages@0
+  inputs:
+    command: 'publish'
+    publishDirectory: '$(Build.ArtifactStagingDirectory)'
+    feedsToUsePublish: 'internal'
+    vstsFeedPublish: '7e2508b7-16ef-40ce-85b8-b565673fcfdb/798e57f2-935d-4895-8079-1db15fda034c'
+    vstsFeedPackagePublish: 'switchDB'
+    versionOption: 'patch'
