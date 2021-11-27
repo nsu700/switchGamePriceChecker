@@ -21,6 +21,7 @@ strategy:
 steps:
 - task: UniversalPackages@0
   displayName: 'Download package'
+  continueOnError: true
   inputs:
     command: 'download'
     downloadDirectory: '$(System.DefaultWorkingDirectory)'
