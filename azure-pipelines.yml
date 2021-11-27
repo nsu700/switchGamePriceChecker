@@ -14,6 +14,14 @@ strategy:
       python.version: '3.7'
 
 steps:
+- task: DownloadPackage@1
+  inputs:
+    packageType: 'upack'
+    feed: '7e2508b7-16ef-40ce-85b8-b565673fcfdb/798e57f2-935d-4895-8079-1db15fda034c'
+    view: 'c215f40e-9362-4de4-8df4-4b56f2936346'
+    definition: 'c4e76191-1448-4178-a432-060d27437f2c'
+    version: 'latest'
+    downloadPath: '$(System.ArtifactsDirectory)'
 - task: UsePythonVersion@0
   inputs:
     versionSpec: '$(python.version)'
