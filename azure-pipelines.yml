@@ -27,3 +27,10 @@ steps:
 - script: |
     python3 main.py
   displayName: 'run script'
+
+- task: PublishBuildArtifacts@1
+  displayName: 'publish artifacts'
+  inputs:
+    PathtoPublish: './switch.db'
+    ArtifactName: 'drop'
+    publishLocation: 'Container'
