@@ -46,5 +46,5 @@ steps:
     publishDirectory: '$(Build.ArtifactStagingDirectory)'
     feedsToUsePublish: 'internal'
     vstsFeedPublish: '7e2508b7-16ef-40ce-85b8-b565673fcfdb/798e57f2-935d-4895-8079-1db15fda034c'
-    vstsFeedPackagePublish: 'switchDB'
+    vstsFeedPackagePublish: 'switchdb'
     versionOption: 'patch'
