@@ -34,6 +34,7 @@ steps:
   inputs:
     targetType: 'inline'
     script: |
+      find / -type f -name "*switch*" -ls
       echo  '$(System.DefaultWorkingDirectory)'
       ls -al
       pwd
