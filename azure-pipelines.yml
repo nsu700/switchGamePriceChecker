@@ -6,9 +6,11 @@
 schedules:
 - cron: "0 0 * * *"
   displayName: Daily midnight build
+  always: true
   branches:
     include:
     - main
+
 pool:
   vmImage: ubuntu-latest
 strategy:
