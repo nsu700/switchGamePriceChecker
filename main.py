@@ -28,8 +28,9 @@ def get_list(url, db_conn):
             get_price(gameUrl, name, db_conn, today)
 
 def insertDB(cursor, date, name, price, currency, url, table):
-    sqlInsert = "INSERT INTO '{}' VALUES ({}, \"{}\", {}, '{}', '{}')".format(table, date, name, price, currency, url)
+    sqlInsert = "INSERT INTO '{}' VALUES ('{}', \"{}\", {}, '{}', '{}')".format(table, date, name, price, currency, url)
     cursor.execute(sqlInsert)
+    logging.debug(sqlInsert)
     logging.info("Insert detail of game {}".format(name))
 
 def maintainGameTable(cursor, id, name, url):
@@ -39,19 +40,11 @@ def maintainGameTable(cursor, id, name, url):
     if (not cursor.fetchall()):
         logging.info("{} table missing, creating table {}".format(name, gameID))
         cursor.execute("INSERT INTO switch VALUES(\"{}\", '{}', '{}')".format(name, gameID, url))
-        cursor.execute("CREATE TABLE IF NOT EXISTS '{}' (date text, name text, price real, currency text, url text )".format(gameID))
+        cursor.execute("CREATE TABLE IF NOT EXISTS '{}' (date real, name text, price real, currency text, url text )".format(gameID))
     return gameID
 
 if __name__=='__main__':
     SWITCH_URL = 'https://store.nintendo.com.hk/games/all-released-games'
-    FAVOURITE_LIST = [""]
-    # db_conn = sqlite3.connect("switch.db")
-    # cursor = db_conn.cursor()
-    # logging.basicConfig(stream=sys.stdout, format='[%(asctime)s] %(levelname)s - %(message)s', level=logging.DEBUG)
-    # logging.info("Successfully Connected to SQLite")
-    # cursor.execute('''CREATE TABLE IF NOT EXISTS switch
-    #                 (name real, id integer, url text )''')
-    # get_list(SWITCH_URL, cursor)
     try:
         db_conn = sqlite3.connect("switch.db")
         cursor = db_conn.cursor()
