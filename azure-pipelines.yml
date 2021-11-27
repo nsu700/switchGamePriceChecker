@@ -24,7 +24,7 @@ steps:
   continueOnError: true
   inputs:
     command: 'download'
-    downloadDirectory: './'
+    downloadDirectory: '$(System.DefaultWorkingDirectory)'
     feedsToUse: 'internal'
     vstsFeed: '7e2508b7-16ef-40ce-85b8-b565673fcfdb/798e57f2-935d-4895-8079-1db15fda034c'
     vstsFeedPackage: 'c4e76191-1448-4178-a432-060d27437f2c'
@@ -34,6 +34,7 @@ steps:
   inputs:
     targetType: 'inline'
     script: |
+      echo  '$(System.DefaultWorkingDirectory)'
       ls -l
       pwd
 - task: UsePythonVersion@0
