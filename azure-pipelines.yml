@@ -35,7 +35,7 @@ steps:
     pipeline: '7'
     buildVersionToDownload: 'latest'
     downloadType: 'specific'
-    itemPattern: 'switch.db'
+    itemPattern: 'drop/switch.db'
     downloadPath: '$(System.DefaultWorkingDirectory)'
 - task: Bash@3
   inputs:
