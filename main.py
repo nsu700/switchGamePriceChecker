@@ -4,9 +4,22 @@ from bs4 import BeautifulSoup
 from datetime import date
 import logging
 import sys
+import time
+
+def get_response(url):
+    try:
+        response = requests.get(url, timeout=CTIMEOUT)
+    except requests.HTTPError:
+        time.sleep(5)
+        response = requests.get(url, timeout=CTIMEOUT)
+    finally:
+        if response:
+            return(response)
+        else:
+            sys.exit
 
 def get_price(url, name, db_conn, today):
-    response = requests.get(url)
+    response = get_response(url)
     soup = BeautifulSoup(response.text, 'html.parser')
     logging.debug('Pulling info from {}'.format(url))
     price = soup.find("meta", property="product:price:amount").get("content")
@@ -17,7 +30,7 @@ def get_price(url, name, db_conn, today):
     insertDB(db_conn, today, name, price, currency, url, gameTableID)
 
 def get_list(url, db_conn):
-    response = requests.get(url)
+    response = get_response(url)
     soup = BeautifulSoup(response.text, 'html.parser')
     gamelist = soup.findAll("a" , {"class":"category-product-item-title-link"})
     today = date.today()
@@ -45,6 +58,7 @@ def maintainGameTable(cursor, id, name, url):
 
 if __name__=='__main__':
     SWITCH_URL = 'https://store.nintendo.com.hk/games/all-released-games'
+    CTIMEOUT = 10
     try:
         db_conn = sqlite3.connect("switch.db")
         cursor = db_conn.cursor()
