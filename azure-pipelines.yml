@@ -20,13 +20,12 @@ strategy:
 
 steps:
 - task: UniversalPackages@0
-  continueOnError: true
   inputs:
     command: 'download'
     downloadDirectory: '$(System.DefaultWorkingDirectory)'
     feedsToUse: 'internal'
-    vstsFeed: 'e5b967e8-0685-4eaa-836b-08a1ace8b86e'
-    vstsFeedPackage: 'switchdb'
+    vstsFeed: '7e2508b7-16ef-40ce-85b8-b565673fcfdb/798e57f2-935d-4895-8079-1db15fda034c'
+    vstsFeedPackage: 'c4e76191-1448-4178-a432-060d27437f2c'
     vstsPackageVersion: '*'
 
 - task: Bash@3
