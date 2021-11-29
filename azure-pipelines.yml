@@ -20,7 +20,7 @@ strategy:
 
 steps:
 - task: UniversalPackages@0
-  displayName: Download artifacts
+  displayName: Download artifacts from Azure Artifacts
   inputs:
     command: 'download'
     downloadDirectory: '$(System.DefaultWorkingDirectory)'
@@ -29,6 +29,7 @@ steps:
     vstsFeedPackage: 'c4e76191-1448-4178-a432-060d27437f2c'
     vstsPackageVersion: '*'
 - task: DownloadBuildArtifacts@1
+  displayName: Download artifact from build
   inputs:
     buildType: 'specific'
     project: '7e2508b7-16ef-40ce-85b8-b565673fcfdb'
@@ -37,6 +38,12 @@ steps:
     downloadType: 'specific'
     itemPattern: 'drop/switch.db'
     downloadPath: '$(System.DefaultWorkingDirectory)'
+- task: CopyFiles@2
+  displayName: Move switchDB out
+  inputs:
+    SourceFolder: '$(System.DefaultWorkingDirectory)/drop/'
+    Contents: 'switch.db'
+    TargetFolder: '$(System.DefaultWorkingDirectory)'
 - task: Bash@3
   inputs:
     targetType: 'inline'
