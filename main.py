@@ -75,8 +75,8 @@ if __name__=='__main__':
         cursor = db_conn.cursor()
         logging.basicConfig(stream=sys.stdout, format='[%(asctime)s] %(levelname)s - %(message)s', level=logging.DEBUG)
         logging.info("Successfully Connected to SQLite")
-        cursor.execute('''ALTER TABLE switch ADD price text''')
-        sys.exit(0)
+        # cursor.execute('''ALTER TABLE switch ADD price text''')
+        # sys.exit(0)
         cursor.execute('''CREATE TABLE IF NOT EXISTS switch
                         (name real, id integer, url text, price text)''')
         get_list(SWITCH_URL, cursor)
