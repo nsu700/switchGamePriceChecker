@@ -5,6 +5,13 @@ from datetime import date
 import logging
 import sys
 import time
+import os
+
+def slack_notification(name, price, link):
+    data = {'text':'The game {} price {} lower now, the link is {}'.format(name, price, link)}
+    url = os.environ['SLACK_WEBHOOK']
+    logging.info("slack notification -- ", url, data)
+    requests.post(url,json=data, verify=False)
 
 def get_response(url):
     try:
@@ -57,12 +64,13 @@ def maintainGameTable(cursor, id, name, url, price):
         cursor.execute("INSERT INTO switch VALUES(\"{}\", '{}', '{}', {})".format(name, gameID, url, price))
         cursor.execute("CREATE TABLE IF NOT EXISTS '{}' (date real, name text, price real, currency text, url text )".format(gameID))
     else:
-        updateGamePrice(cursor, gameID, price)
+        updateGamePrice(cursor, gameID, price, name, url)
     return gameID
 
-def updateGamePrice(cursor, id, price):
+def updateGamePrice(cursor, id, price, name, link):
     priceQuery = cursor.execute("SELECT price FROM switch WHERE id='{}'".format(id)).fetchall()[0][0]
     sqlUpdate = "UPDATE switch SET price = {} WHERE id = '{}'".format(price, id)
+    if (priceQuery < price): slack_notification(name, price, link)
     if (priceQuery != price):
         logging.info("Price not the same, updating price. {} != {}".format(priceQuery, price))
         logging.debug("Running sql update the db: {}".format(sqlUpdate))
