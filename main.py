@@ -35,13 +35,13 @@ def get_list(url, db_conn):
     gamelist = soup.findAll("div", class_=["category-product-item-price", "category-product-item-title"])
     today = date.today()
     numOfGame = len(gamelist)
-    for game in range(0, numOfGame, 2):
-        price = game[i].select("span.price-wrapper")[0].get_text(strip=True)
-        name = game[i+1].select("a.category-product-item-title-link")[0].get_text(strip=True)
-        gameUrl = game[i+1].select("a.category-product-item-title-link")[0].get("href")
+    for i in range(0, numOfGame, 2):
+        price = gamelist[i].select("span.price-wrapper")[0].get_text(strip=True)
+        name = gamelist[i+1].select("a.category-product-item-title-link")[0].get_text(strip=True)
+        gameUrl = gamelist[i+1].select("a.category-product-item-title-link")[0].get("href")
         if gameUrl:
             get_price(gameUrl, name, db_conn, today, price)
-
+            
 def insertDB(cursor, date, name, price, currency, url, table):
     sqlInsert = "INSERT INTO '{}' VALUES ('{}', \"{}\", {}, '{}', '{}')".format(table, date, name, price, currency, url)
     cursor.execute(sqlInsert)
