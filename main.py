@@ -62,7 +62,7 @@ def maintainGameTable(cursor, id, name, url, price):
 
 def updateGamePrice(cursor, id, price):
     priceQuery = cursor.execute("SELECT price FROM switch WHERE id='{}'".format(id)).fetchall()[0][0]
-    sqlUpdate = "UPDATE switch SET price = {} WHERE id = {}".format(price, id)
+    sqlUpdate = "UPDATE switch SET price = {} WHERE id = '{}'".format(price, id)
     if (priceQuery != price):
         logging.info("Price not the same, updating price. {} != {}".format(priceQuery, price))
         logging.debug("Running sql update the db: {}".format(sqlUpdate))
