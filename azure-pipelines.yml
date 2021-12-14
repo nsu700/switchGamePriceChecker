@@ -46,14 +46,6 @@ steps:
     SourceFolder: '$(System.DefaultWorkingDirectory)/drop/'
     Contents: 'switch.db'
     TargetFolder: '$(System.DefaultWorkingDirectory)'
-
-- task: Bash@3
-  inputs:
-    targetType: 'inline'
-    script: |
-      echo  '$(System.DefaultWorkingDirectory)'
-      ls -al
-      pwd
       
 - task: UsePythonVersion@0
   inputs:
@@ -64,6 +56,8 @@ steps:
     python3 -m pip install --upgrade pip
     pip3 install -r requirements.txt
   displayName: 'Install dependencies'
+  env:
+    SLACK_WEBHOOK: $(SLACK_WEBHOOK)
 
 - script: |
     python3 main.py
