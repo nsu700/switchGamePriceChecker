@@ -41,7 +41,7 @@ def get_list(url, db_conn):
         gameUrl = gamelist[i+1].select("a.category-product-item-title-link")[0].get("href")
         if gameUrl:
             get_price(gameUrl, name, db_conn, today, price)
-            
+
 def insertDB(cursor, date, name, price, currency, url, table):
     sqlInsert = "INSERT INTO '{}' VALUES ('{}', \"{}\", {}, '{}', '{}')".format(table, date, name, price, currency, url)
     cursor.execute(sqlInsert)
@@ -61,10 +61,11 @@ def maintainGameTable(cursor, id, name, url, price):
     return gameID
 
 def updateGamePrice(cursor, id, price):
-    priceQuery = cursor.execute("SELECT url FROM switch WHERE id='{}'".format(id)).fetchall()[0][0]
+    priceQuery = cursor.execute("SELECT price FROM switch WHERE id='{}'".format(id)).fetchall()[0][0]
     sqlUpdate = "UPDATE switch SET price = {} WHERE id = {}".format(price, id)
     if (priceQuery != price):
         logging.info("Price not the same, updating price. {} != {}".format(priceQuery, price))
+        logging.debug("Running sql update the db: {}".format(sqlUpdate))
         cursor.execute(sqlUpdate)
 
 if __name__=='__main__':
