@@ -7,8 +7,7 @@ import sys
 import time
 import os
 
-def slack_notification(name, price, link):
-    data = {'text':'The game {} price {} lower now, the link is {}'.format(name, price, link)}
+def slack_notification(data):
     url = os.environ['SLACK_WEBHOOK']
     logging.info("slack notification -- ", url, data)
     requests.post(url,json=data, verify=False)
@@ -63,6 +62,8 @@ def maintainGameTable(cursor, id, name, url, price):
         logging.info("{} table missing, creating table {}".format(name, gameID))
         cursor.execute("INSERT INTO switch VALUES(\"{}\", '{}', '{}', {})".format(name, gameID, url, price))
         cursor.execute("CREATE TABLE IF NOT EXISTS '{}' (date real, name text, price real, currency text, url text )".format(gameID))
+        data = {'text':'发现新游戏{}，价钱是{}，链接是{}'.format(name, price, url)}
+        slack_notification(data)
     else:
         updateGamePrice(cursor, gameID, price, name, url)
     return gameID
@@ -70,7 +71,9 @@ def maintainGameTable(cursor, id, name, url, price):
 def updateGamePrice(cursor, id, price, name, link):
     priceQuery = cursor.execute("SELECT price FROM switch WHERE id='{}'".format(id)).fetchall()[0][0]
     sqlUpdate = "UPDATE switch SET price = {} WHERE id = '{}'".format(price, id)
-    if (priceQuery < price): slack_notification(name, price, link)
+    if (priceQuery < price):
+        data = {'text':'{}降价啦，原价是{}， 现价是{}，点击链接不要买先{}'.format(name, priceQuery, price, link)}
+        slack_notification(data)
     if (priceQuery != price):
         logging.info("Price not the same, updating price. {} != {}".format(priceQuery, price))
         logging.debug("Running sql update the db: {}".format(sqlUpdate))
