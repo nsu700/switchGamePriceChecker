@@ -6,18 +6,19 @@ import logging
 import sys
 import time
 import os
+from fake_useragent import UserAgent
 
 def slack_notification(data):
     url = os.environ['SLACK_WEBHOOK']
-    logging.info("slack notification -- ", url, data)
-    requests.post(url,json=data, verify=False)
+    # logging.info("slack notification -- ", url, data)
+    requests.post(url,json=data)
 
 def get_response(url):
     try:
-        response = requests.get(url, timeout=CTIMEOUT)
+        response = requests.get(url, HEADERS, timeout=CTIMEOUT)
     except requests.HTTPError:
         time.sleep(5)
-        response = requests.get(url, timeout=CTIMEOUT)
+        response = requests.get(url, HEADERS, timeout=CTIMEOUT)
     finally:
         if response:
             return(response)
@@ -81,7 +82,10 @@ def updateGamePrice(cursor, id, price, name, link):
 
 if __name__=='__main__':
     SWITCH_URL = 'https://store.nintendo.com.hk/games/all-released-games'
-    CTIMEOUT = 10
+    CTIMEOUT = 20
+    fu = UserAgent()
+    global HEADERS
+    HEADERS = {'User-Agent': fu.random}
     try:
         db_conn = sqlite3.connect("switch.db")
         cursor = db_conn.cursor()
