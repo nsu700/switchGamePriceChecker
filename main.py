@@ -10,7 +10,6 @@ from fake_useragent import UserAgent
 
 def slack_notification(data):
     url = os.environ['SLACK_WEBHOOK']
-    # logging.info("slack notification -- ", url, data)
     requests.post(url,json=data)
 
 def get_response(url):
@@ -75,9 +74,12 @@ def updateGamePrice(cursor, id, price, name, link):
     if (priceQuery < price):
         data = {'text':'{}降价啦，原价是{}， 现价是{}，点击链接不要买先{}'.format(name, priceQuery, price, link)}
         slack_notification(data)
-    if (priceQuery != price):
         logging.info("Price not the same, updating price. {} != {}".format(priceQuery, price))
-        logging.debug("Running sql update the db: {}".format(sqlUpdate))
+        cursor.execute(sqlUpdate)
+    elif (priceQuery > price):
+        data = {'text':'他娘类， {}降价了，原价是{}， 现价是{}，游戏链接{}'.format(name, priceQuery, price, link)}
+        slack_notification(data)
+        logging.info("Price not the same, updating price. {} != {}".format(priceQuery, price))
         cursor.execute(sqlUpdate)
 
 if __name__=='__main__':
