@@ -28,7 +28,7 @@ def get_price(url, name, db_conn, today, price):
     response = get_response(url)
     soup = BeautifulSoup(response.text, 'html.parser')
     logging.debug('Pulling info from {}'.format(url))
-    price = soup.find("meta", property="product:price:amount").get("content")
+    price = int(soup.find("meta", property="product:price:amount").get("content"))
     currency = soup.find("meta", property="product:price:currency").get("content")
     id = url.split('/')[-1]
     gameTableID = maintainGameTable(db_conn, id, name, url, price)
@@ -69,17 +69,19 @@ def maintainGameTable(cursor, id, name, url, price):
     return gameID
 
 def updateGamePrice(cursor, id, price, name, link):
-    priceQuery = cursor.execute("SELECT price FROM switch WHERE id='{}'".format(id)).fetchall()[0][0]
+    priceQuery = int(cursor.execute("SELECT price FROM switch WHERE id='{}'".format(id)).fetchall()[0][0])
     sqlUpdate = "UPDATE switch SET price = {} WHERE id = '{}'".format(price, id)
-    if (priceQuery < price):
+    if (priceQuery > price):
         data = {'text':'{}降价啦，原价是{}， 现价是{}，点击链接不要买先{}'.format(name, priceQuery, price, link)}
         slack_notification(data)
-        logging.info("Price not the same, updating price. {} != {}".format(priceQuery, price))
+        logging.info("Price not the same, updating price. {} > {}".format(priceQuery, price))
+        logging.debug("The original price is {}, type is {}, the current price is {}, type is {}".format(priceQuery, type(priceQuery), price, type(price)))
         cursor.execute(sqlUpdate)
-    elif (priceQuery > price):
-        data = {'text':'他娘类， {}降价了，原价是{}， 现价是{}，游戏链接{}'.format(name, priceQuery, price, link)}
+    elif (priceQuery < price):
+        data = {'text':'他娘类， {}涨价了，原价是{}， 现价是{}，游戏链接{}'.format(name, priceQuery, price, link)}
         slack_notification(data)
-        logging.info("Price not the same, updating price. {} != {}".format(priceQuery, price))
+        logging.info("Price not the same, updating price. {} < {}".format(priceQuery, price))
+        logging.debug("The original price is {}, type is {}, the current price is {}, type is {}".format(priceQuery, type(priceQuery), price, type(price)))
         cursor.execute(sqlUpdate)
 
 if __name__=='__main__':
